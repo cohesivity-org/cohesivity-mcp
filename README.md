@@ -84,6 +84,33 @@ Management API with the package name and version. Neither blocks startup nor
 affects server behavior on failure. The server's own API calls include a
 `User-Agent` header identifying the package.
 
+## Releasing
+
+Releases publish to npm automatically via GitHub Actions when a version tag is
+pushed. The workflow uses npm Trusted Publishing (OIDC) so there is no
+`NPM_TOKEN` secret in this repo.
+
+### One-time setup
+
+1. On [npmjs.com](https://www.npmjs.com), go to `@cohesivity/mcp` → Settings →
+   Publishing & 2FA → Trusted Publishers.
+2. Add: repository `cohesivity-org/cohesivity-mcp`, workflow `release.yml`.
+
+### Publishing a new version
+
+1. Bump the version in `package.json`.
+2. Commit, merge to `main`.
+3. Tag and push:
+
+```bash
+git tag v0.2.0
+git push --tags
+```
+
+The `release.yml` workflow runs syntax checks and tests, verifies the tag
+matches `package.json`, and publishes with signed provenance. A tag/version
+mismatch fails the workflow without publishing.
+
 ## Verifying the release
 
 Every npm version publishes from this repository through npm Trusted Publishing
