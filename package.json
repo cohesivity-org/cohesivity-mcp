@@ -1,10 +1,11 @@
 {
   "name": "@cohesivity/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Standalone Cohesivity MCP server. Provisions tenants, resources, and project bootstrapping over stdio. Run with `npx -y @cohesivity/mcp`.",
   "type": "module",
   "bin": {
-    "cohesivity-mcp": "bin/cohesivity-mcp.mjs"
+    "cohesivity-mcp": "bin/cohesivity-mcp.mjs",
+    "mcp": "bin/cohesivity-mcp.mjs"
   },
   "scripts": {
     "postinstall": "node scripts/postinstall.mjs || true",
