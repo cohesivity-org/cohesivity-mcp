@@ -1,0 +1,38 @@
+{
+  "name": "@cohesivity/mcp",
+  "version": "0.1.0",
+  "description": "Standalone Cohesivity MCP server. Provisions tenants, resources, and project bootstrapping over stdio. Run with `npx -y @cohesivity/mcp`.",
+  "type": "module",
+  "bin": {
+    "cohesivity-mcp": "bin/cohesivity-mcp.mjs"
+  },
+  "scripts": {
+    "postinstall": "node scripts/postinstall.mjs || true",
+    "test": "node --test"
+  },
+  "files": [
+    "bin/",
+    "mcp/",
+    "scripts/postinstall.mjs"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "cohesivity",
+    "mcp",
+    "model-context-protocol",
+    "ai-agents",
+    "agent-native",
+    "stdio"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cohesivity-org/cohesivity-mcp.git"
+  },
+  "homepage": "https://cohesivity.ai"
+}
