@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url)));
-const serverVersion = "4.1.3";
+const serverVersion = "4.1.4";
 const bin = fileURLToPath(new URL("../bin/cohesivity-mcp.mjs", import.meta.url));
 const server = fileURLToPath(new URL("../mcp/project-bootstrap.mjs", import.meta.url));
 const request = (id, method, params) => JSON.stringify({ jsonrpc: "2.0", id, method, params });
