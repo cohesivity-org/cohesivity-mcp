@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url)));
-const serverVersion = "4.1.2";
+const serverVersion = "4.1.3";
 const bin = fileURLToPath(new URL("../bin/cohesivity-mcp.mjs", import.meta.url));
 const server = fileURLToPath(new URL("../mcp/project-bootstrap.mjs", import.meta.url));
 const request = (id, method, params) => JSON.stringify({ jsonrpc: "2.0", id, method, params });
@@ -82,6 +82,19 @@ test("direct server invocation matches bin wrapper behavior", () => {
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
+});
+
+test("initialize and tool descriptions guide a cold agent through the call order", async () => {
+  const { handleRequest, TOOLS } = await import("../mcp/project-bootstrap.mjs");
+  const init = await handleRequest({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} });
+  assert.match(init.result.instructions, /create_tenant first/);
+  assert.match(init.result.instructions, /provision_resource/);
+
+  const byName = Object.fromEntries(TOOLS.map((t) => [t.name, t]));
+  assert.match(byName.create_tenant.description, /first/i);
+  assert.match(byName.create_tenant.inputSchema.properties.project_root.description, /creates? .*\.cohesivity|writes? .*\.cohesivity/i);
+  assert.doesNotMatch(byName.create_tenant.inputSchema.properties.project_root.description, /owns \.cohesivity/);
+  assert.match(byName.provision_resource.description, /create_tenant/);
 });
 
 test("package.json version is well-formed semver", () => {
