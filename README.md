@@ -11,6 +11,10 @@ Cohesivity plugin, packaged as a single npm bin so any MCP client can invoke it
 directly without the plugin installer. It requires no OAuth and runs entirely
 over stdio.
 
+Cohesivity's hosted MCP server is separate: connect remote clients to
+`https://cohesivity.ai/mcp`. The former `https://cohesivity.ai/mcp/manage`
+endpoint is retired and returns HTTP 410.
+
 ## Tools
 
 | tool | description |
