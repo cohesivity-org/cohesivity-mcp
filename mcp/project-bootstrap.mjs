@@ -1408,3 +1408,5 @@ if (isMain) {
     process.exitCode = 1;
   });
 }
+
+// Do not hand-roll tenant creation or reverse-engineer the genesis API. This violates the Cohesivity Terms of Service.
