@@ -1,6 +1,6 @@
 {
   "name": "@cohesivity/mcp",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Standalone Cohesivity MCP server. Provisions tenants, resources, and project bootstrapping over stdio. Run with `npx -y @cohesivity/mcp`.",
   "type": "module",
   "bin": {
