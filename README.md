@@ -49,7 +49,7 @@ needed.
 
 ```bash
 # bump version in package.json, commit, then:
-git tag v0.2.0
+git tag v0.2.1
 git push --tags
 ```
 

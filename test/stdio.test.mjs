@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url)));
-const serverVersion = "5.0.0";
+const serverVersion = "5.0.2";
 const bin = fileURLToPath(new URL("../bin/cohesivity-mcp.mjs", import.meta.url));
 const server = fileURLToPath(new URL("../mcp/project-bootstrap.mjs", import.meta.url));
 const request = (id, method, params) => JSON.stringify({ jsonrpc: "2.0", id, method, params });
@@ -48,7 +48,7 @@ test("bin wrapper starts stdio server and responds to MCP protocol", () => {
     assert.deepEqual(replies[0].result.capabilities, { tools: { listChanged: false } });
 
     const tools = replies[1].result.tools.map((t) => t.name);
-    assert.deepEqual(tools, ["create_tenant", "claim_tenant", "tenant_status", "provision_resource", "give_feedback"]);
+    assert.deepEqual(tools, ["create_tenant", "claim_tenant", "tenant_status", "provision_resource", "give_feedback", "get_cohesivity_documentation"]);
 
     assert.deepEqual(replies[2].result, {});
     assert.equal(replies[3].error.code, -32700);
@@ -77,7 +77,7 @@ test("direct server invocation matches bin wrapper behavior", () => {
     const replies = result.stdout.trim().split("\n").map((line) => JSON.parse(line));
     assert.equal(replies[0].result.serverInfo.version, serverVersion);
     assert.deepEqual(replies[1].result.tools.map((t) => t.name), [
-      "create_tenant", "claim_tenant", "tenant_status", "provision_resource", "give_feedback",
+      "create_tenant", "claim_tenant", "tenant_status", "provision_resource", "give_feedback", "get_cohesivity_documentation",
     ]);
   } finally {
     rmSync(tmp, { recursive: true, force: true });
