@@ -24,6 +24,7 @@ endpoint is retired and returns HTTP 410.
 | `tenant_status` | Read current tenant status from the Management API |
 | `provision_resource` | Provision one or more resources (postgres, redis, vector-database, etc.) |
 | `give_feedback` | Submit feedback on Cohesivity services |
+| `get_cohesivity_documentation` | Read one current public Cohesivity page: `docs`, `quick-reference`, `full-reference`, `onboarding`, `pricing`, `offerings`, or `offering` (which also needs the `offering` slug). Read-only; needs no tenant or confirmation |
 
 Mutating tools require literal `confirmed: true` only when the current user
 request explicitly authorizes the exact action.
