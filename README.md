@@ -42,6 +42,61 @@ request explicitly authorizes the exact action.
 }
 ```
 
+## Microsoft Agent Framework
+
+[Microsoft Agent Framework](https://github.com/microsoft/agent-framework)
+agents can use the hosted server as an MCP tool. When a task needs a backend,
+the agent creates a tenant and provisions what it needs, such as Postgres,
+Redis or object storage. No Cohesivity account or API key is required to start.
+
+Python, after `pip install agent-framework`:
+
+```python
+import asyncio
+
+from agent_framework import Agent, MCPStreamableHTTPTool
+from agent_framework.openai import OpenAIChatClient
+
+
+async def main() -> None:
+    async with Agent(
+        client=OpenAIChatClient(model="gpt-5.4-mini"),
+        tools=MCPStreamableHTTPTool(name="cohesivity", url="https://cohesivity.ai/mcp"),
+    ) as agent:
+        result = await agent.run("Set up a Postgres database for my todo app.")
+        print(result.text)
+
+
+asyncio.run(main())
+```
+
+.NET, after `dotnet add package Microsoft.Agents.AI.OpenAI` and
+`dotnet add package ModelContextProtocol`:
+
+```csharp
+using Microsoft.Agents.AI;
+using Microsoft.Extensions.AI;
+using ModelContextProtocol.Client;
+using OpenAI;
+using OpenAI.Chat;
+
+await using var mcpClient = await McpClient.CreateAsync(new HttpClientTransport(new()
+{
+    Endpoint = new Uri("https://cohesivity.ai/mcp"),
+}));
+var tools = await mcpClient.ListToolsAsync();
+
+AIAgent agent = new OpenAIClient(Environment.GetEnvironmentVariable("OPENAI_API_KEY"))
+    .GetChatClient("gpt-5.4-mini")
+    .AsAIAgent(tools: [.. tools.Cast<AITool>()]);
+
+Console.WriteLine(await agent.RunAsync("Set up a Postgres database for my todo app."));
+```
+
+Both examples use OpenAI and read `OPENAI_API_KEY`. Any other Agent Framework
+chat client works too. New tenants expire after 72 hours unless claimed;
+`claim_tenant` returns a link where the user approves keeping it.
+
 ## Releasing
 
 Releases publish to npm automatically via GitHub Actions when a version tag is
