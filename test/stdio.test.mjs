@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url)));
-const serverVersion = "5.0.2";
+const serverVersion = "5.0.4";
 const bin = fileURLToPath(new URL("../bin/cohesivity-mcp.mjs", import.meta.url));
 const server = fileURLToPath(new URL("../mcp/project-bootstrap.mjs", import.meta.url));
 const request = (id, method, params) => JSON.stringify({ jsonrpc: "2.0", id, method, params });
@@ -95,6 +95,28 @@ test("initialize and tool descriptions guide a cold agent through the call order
   assert.match(byName.create_tenant.inputSchema.properties.project_root.description, /creates? .*\.cohesivity|writes? .*\.cohesivity/i);
   assert.doesNotMatch(byName.create_tenant.inputSchema.properties.project_root.description, /owns \.cohesivity/);
   assert.match(byName.provision_resource.description, /create_tenant/);
+});
+
+// COH-329: clients that read only top-level properties drop every argument
+// of a tool declared as a top-level oneOf, so each schema is one flat object.
+test("every tool schema is one flat object with its arguments in top-level properties", async () => {
+  const { TOOLS } = await import("../mcp/project-bootstrap.mjs");
+  for (const tool of TOOLS) {
+    for (const schema of [tool.inputSchema, tool.outputSchema].filter(Boolean)) {
+      assert.equal(schema.type, "object", tool.name);
+      for (const keyword of ["oneOf", "anyOf", "allOf", "not", "if"]) {
+        assert.equal(schema[keyword], undefined, `${tool.name} has a top-level ${keyword}`);
+      }
+    }
+    for (const field of tool.inputSchema.required) assert.ok(tool.inputSchema.properties[field], `${tool.name}.${field}`);
+  }
+  const provision = TOOLS.find((tool) => tool.name === "provision_resource");
+  assert.deepEqual(provision.inputSchema.required, ["project_root", "confirmed"]);
+  assert.deepEqual(
+    Object.keys(provision.inputSchema.properties).sort(),
+    ["configuration", "configurations", "confirmed", "project_root", "resource", "resources"],
+  );
+  assert.match(provision.description, /exactly one of resource or resources/);
 });
 
 test("package.json version is well-formed semver", () => {
