@@ -42,6 +42,31 @@ request explicitly authorizes the exact action.
 }
 ```
 
+### Attribution
+
+`create_tenant` runs the Cohesivity quickstart, which names the agent that
+launched this server by walking its own parent processes (for example
+`claude` or `cursor`) and records that name with the new tenant. To tag
+tenants created through your integration, set `COHESIVITY_ATTRIBUTION` in the
+server's environment. The server reads it once at start and the tenant is
+recorded as `<agent>.<attribution>`, for example `claude.gh-npcpy`:
+
+```json
+{
+  "mcpServers": {
+    "cohesivity": {
+      "command": "npx",
+      "args": ["-y", "@cohesivity/mcp"],
+      "env": { "COHESIVITY_ATTRIBUTION": "gh-npcpy" }
+    }
+  }
+}
+```
+
+The value must be 1-40 characters of lowercase letters, digits, and hyphens,
+starting with a letter or digit. An invalid value is ignored with a warning on
+stderr, and tenant creation proceeds without it.
+
 ## Microsoft Agent Framework
 
 [Microsoft Agent Framework](https://github.com/microsoft/agent-framework)
