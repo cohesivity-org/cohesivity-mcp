@@ -42,6 +42,47 @@ request explicitly authorizes the exact action.
 }
 ```
 
+### Attribution
+
+`create_tenant` runs the Cohesivity quickstart, which names the agent that
+launched this server by walking its own parent processes (for example
+`claude` or `cursor`) and records that name with the new tenant. To tag
+tenants created through your integration, give the server a label. The tenant
+is then recorded as `<agent>.<label>`, for example `claude.raven`.
+
+Pass it as a server argument:
+
+```json
+{
+  "mcpServers": {
+    "cohesivity": {
+      "command": "npx",
+      "args": ["-y", "@cohesivity/mcp", "--attribution", "raven"]
+    }
+  }
+}
+```
+
+or set `COHESIVITY_ATTRIBUTION` in the server's environment:
+
+```json
+{
+  "mcpServers": {
+    "cohesivity": {
+      "command": "npx",
+      "args": ["-y", "@cohesivity/mcp"],
+      "env": { "COHESIVITY_ATTRIBUTION": "raven" }
+    }
+  }
+}
+```
+
+Use the argument form for catalogs that can pass args but can't set env. The
+server reads the label once at start. If both are set, a valid argument wins.
+The value must be 1-40 lowercase letters, digits, dots, underscores, or hyphens,
+starting with a letter or digit. An invalid value is ignored with a warning on
+stderr, and tenant creation proceeds without it.
+
 ## Microsoft Agent Framework
 
 [Microsoft Agent Framework](https://github.com/microsoft/agent-framework)

@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url)));
-const serverVersion = "5.0.4";
+const serverVersion = "5.1.0";
 const bin = fileURLToPath(new URL("../bin/cohesivity-mcp.mjs", import.meta.url));
 const server = fileURLToPath(new URL("../mcp/project-bootstrap.mjs", import.meta.url));
 const request = (id, method, params) => JSON.stringify({ jsonrpc: "2.0", id, method, params });
@@ -126,4 +126,13 @@ test("package.json version is well-formed semver", () => {
 test("bin entry exists and has shebang", () => {
   const content = readFileSync(bin, "utf8");
   assert.ok(content.startsWith("#!/usr/bin/env node"));
+});
+
+test("bin wrapper reads --attribution and COHESIVITY_ATTRIBUTION once at start", () => {
+  // Static on purpose: spawning the wrapper also fires its start beacon, so the
+  // argument handling itself is exercised by spawning mcp/project-bootstrap.mjs
+  // in local-bootstrap.test.mjs.
+  const wrapper = readFileSync(bin, "utf8");
+  assert.match(wrapper, /import \{ runServer, startupDependencies, MANAGEMENT_API_URL \} from "\.\.\/mcp\/project-bootstrap\.mjs";/);
+  assert.match(wrapper, /runServer\(process\.stdin, process\.stdout, startupDependencies\(process\.env, process\.argv\.slice\(2\)\)\)/);
 });
