@@ -127,3 +127,12 @@ test("bin entry exists and has shebang", () => {
   const content = readFileSync(bin, "utf8");
   assert.ok(content.startsWith("#!/usr/bin/env node"));
 });
+
+test("bin wrapper reads --attribution and COHESIVITY_ATTRIBUTION once at start", () => {
+  // Static on purpose: spawning the wrapper also fires its start beacon, so the
+  // argument handling itself is exercised by spawning mcp/project-bootstrap.mjs
+  // in local-bootstrap.test.mjs.
+  const wrapper = readFileSync(bin, "utf8");
+  assert.match(wrapper, /import \{ runServer, startupDependencies, MANAGEMENT_API_URL \} from "\.\.\/mcp\/project-bootstrap\.mjs";/);
+  assert.match(wrapper, /runServer\(process\.stdin, process\.stdout, startupDependencies\(process\.env, process\.argv\.slice\(2\)\)\)/);
+});
