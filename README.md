@@ -138,6 +138,31 @@ Both examples use OpenAI and read `OPENAI_API_KEY`. Any other Agent Framework
 chat client works too. New tenants expire after 72 hours unless claimed;
 `claim_tenant` returns a link where the user approves keeping it.
 
+## Strands Agents
+
+[Strands Agents](https://strandsagents.com) can use the hosted server through
+the SDK's built-in MCP client. When a task needs a backend, the agent creates a
+tenant and provisions what it needs, such as Postgres, Redis or object storage.
+No Cohesivity account or API key is required to start.
+
+Python, after `pip install strands-agents`:
+
+```python
+from strands import Agent
+from strands.tools.mcp import MCPClient
+
+cohesivity = MCPClient(url="https://cohesivity.ai/mcp")
+
+agent = Agent(tools=[cohesivity])
+agent("Set up a Postgres database for my todo app.")
+```
+
+Passing the client in `tools` lets the agent open and close the MCP connection
+on its own. The example uses the Strands default model, Amazon Bedrock, so it
+needs AWS credentials. Any other Strands model provider works too. New tenants
+expire after 72 hours unless claimed; `claim_tenant` returns a link where the
+user approves keeping it.
+
 ## Releasing
 
 Releases publish to npm automatically via GitHub Actions when a version tag is
